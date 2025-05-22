@@ -62,6 +62,10 @@ const RecommendationsPage = () => {
                 These recommendations are based on the emotional patterns detected in your video. 
                 Consider implementing these strategies and recording follow-up videos to track progress.
               </p>
+              <p className="text-gray-600 mb-4">
+                For more personalized guidance, use the Microsoft Copilot prompt to get AI-powered 
+                recommendations specific to the emotions detected in your video.
+              </p>
               <Button 
                 onClick={() => navigate("/")} 
                 className="bg-brand-600 hover:bg-brand-700"

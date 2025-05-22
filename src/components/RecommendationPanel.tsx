@@ -3,6 +3,21 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { generateCopilotPrompt, sendToCopilot } from "@/utils/copilotPromptGenerator";
+
+interface EmotionData {
+  emotion: string;
+  percentage: number;
+  color: string;
+}
+
+const mockEmotions: EmotionData[] = [
+  { emotion: "Happy", percentage: 45, color: "bg-green-500" },
+  { emotion: "Neutral", percentage: 30, color: "bg-blue-500" },
+  { emotion: "Confused", percentage: 15, color: "bg-amber-500" },
+  { emotion: "Anxious", percentage: 10, color: "bg-red-500" },
+];
 
 interface Recommendation {
   id: string;
@@ -40,6 +55,8 @@ interface RecommendationPanelProps {
 export default function RecommendationPanel({ videoSource }: RecommendationPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [copilotPrompt, setCopilotPrompt] = useState("");
+  const [showingCopilotPrompt, setShowingCopilotPrompt] = useState(false);
 
   useEffect(() => {
     if (!videoSource) return;
@@ -51,11 +68,20 @@ export default function RecommendationPanel({ videoSource }: RecommendationPanel
     // Simulate loading recommendations
     const timer = setTimeout(() => {
       setRecommendations(mockRecommendations);
+      
+      // Generate Copilot prompt based on emotions
+      const prompt = generateCopilotPrompt(mockEmotions);
+      setCopilotPrompt(prompt);
+      
       setIsLoading(false);
     }, 4000);
 
     return () => clearTimeout(timer);
   }, [videoSource]);
+
+  const handleCopilotPromptToggle = () => {
+    setShowingCopilotPrompt(!showingCopilotPrompt);
+  };
 
   if (!videoSource) {
     return null;
@@ -94,6 +120,38 @@ export default function RecommendationPanel({ videoSource }: RecommendationPanel
                 </AccordionItem>
               ))}
             </Accordion>
+            
+            <div className="pt-6 border-t mt-6">
+              <h3 className="text-md font-medium mb-3">Microsoft Copilot Integration</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                These emotions can be analyzed further using Microsoft Copilot for more detailed recommendations.
+              </p>
+              
+              <Button 
+                onClick={handleCopilotPromptToggle} 
+                variant="outline" 
+                className="mb-4"
+              >
+                {showingCopilotPrompt ? "Hide Copilot Prompt" : "Show Copilot Prompt"}
+              </Button>
+              
+              {showingCopilotPrompt && (
+                <div className="bg-slate-50 p-4 rounded-md border border-slate-200 mt-2">
+                  <h4 className="text-sm font-medium mb-2">Generated Microsoft Copilot Prompt:</h4>
+                  <pre className="text-xs bg-slate-100 p-3 rounded-md whitespace-pre-wrap overflow-x-auto">
+                    {copilotPrompt}
+                  </pre>
+                  <div className="mt-4 text-sm text-muted-foreground">
+                    <p>To use this prompt:</p>
+                    <ol className="list-decimal pl-5 mt-2 space-y-1">
+                      <li>Copy the text above</li>
+                      <li>Paste it into Microsoft Copilot</li>
+                      <li>Review and implement the recommendations provided</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </CardContent>
