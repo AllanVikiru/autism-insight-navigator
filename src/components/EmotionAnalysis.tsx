@@ -19,9 +19,10 @@ const mockEmotions: EmotionData[] = [
 
 interface EmotionAnalysisProps {
   videoSource: string;
+  onAnalysisComplete?: () => void;
 }
 
-export default function EmotionAnalysis({ videoSource }: EmotionAnalysisProps) {
+export default function EmotionAnalysis({ videoSource, onAnalysisComplete }: EmotionAnalysisProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
   const [tabValue, setTabValue] = useState("overview");
@@ -36,10 +37,14 @@ export default function EmotionAnalysis({ videoSource }: EmotionAnalysisProps) {
     const timer = setTimeout(() => {
       setEmotions(mockEmotions);
       setIsAnalyzing(false);
+      // Notify parent component that analysis is complete
+      if (onAnalysisComplete) {
+        onAnalysisComplete();
+      }
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [videoSource]);
+  }, [videoSource, onAnalysisComplete]);
 
   if (!videoSource) {
     return null;
