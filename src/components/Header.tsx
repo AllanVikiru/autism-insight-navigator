@@ -7,7 +7,7 @@ export default function Header() {
     <header className="border-b bg-white shadow-sm">
       <div className="container flex h-16 items-center justify-between py-4">
         <Link to="/" className="flex items-center gap-2">
-          <div className="rounded-full bg-navy p-1.5">
+          <div className="rounded-full bg-brand-600 p-1.5">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               viewBox="0 0 24 24" 
@@ -23,23 +23,23 @@ export default function Header() {
               <path d="M12 8h.01"/>
             </svg>
           </div>
-          <span className="text-xl font-bold text-navy">EmotionInsight</span>
+          <span className="text-xl font-bold text-brand-800">EmotionInsight</span>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium text-navy hover:text-teal transition-all-200">
+          <Link to="/" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-all-200">
             Home
           </Link>
-          <Link to="/about" className="text-sm font-medium text-navy hover:text-teal transition-all-200">
+          <Link to="/about" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-all-200">
             About
           </Link>
-          <Link to="/resources" className="text-sm font-medium text-navy hover:text-teal transition-all-200">
+          <Link to="/resources" className="text-sm font-medium text-gray-700 hover:text-brand-600 transition-all-200">
             Resources
           </Link>
         </nav>
-        <Button size="sm" variant="outline" className="hidden md:inline-flex border-teal text-teal hover:bg-teal hover:text-white">
+        <Button size="sm" variant="outline" className="hidden md:inline-flex">
           Get Started
         </Button>
-        <Button size="sm" variant="ghost" className="md:hidden text-navy hover:text-teal">
+        <Button size="sm" variant="ghost" className="md:hidden">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
             <line x1="4" x2="20" y1="12" y2="12" />
             <line x1="4" x2="20" y1="6" y2="6" />

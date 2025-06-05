@@ -34,7 +34,7 @@ const RecommendationsPage = () => {
               onClick={() => navigate("/analyze")} 
               variant="ghost" 
               size="sm"
-              className="flex items-center text-navy hover:text-teal"
+              className="flex items-center"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Back to Analysis
@@ -43,21 +43,21 @@ const RecommendationsPage = () => {
             <Button 
               onClick={() => navigate("/")} 
               variant="outline"
-              className="flex items-center border-teal text-teal hover:bg-teal hover:text-white"
+              className="flex items-center"
             >
               Start New Analysis
             </Button>
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-center text-navy">Support Recommendations</h1>
+            <h1 className="text-3xl font-bold mb-8 text-center">Support Recommendations</h1>
             
             <div className="mb-8">
               <RecommendationPanel videoSource={videoSource} />
             </div>
             
-            <div className="mt-12 bg-gray-50 p-6 rounded-lg border border-teal/20">
-              <h2 className="text-xl font-semibold mb-4 text-navy">Next Steps</h2>
+            <div className="mt-12 bg-gray-50 p-6 rounded-lg">
+              <h2 className="text-xl font-semibold mb-4">Next Steps</h2>
               <p className="text-gray-600 mb-4">
                 These recommendations are based on the emotional patterns detected in your video. 
                 Consider implementing these strategies and recording follow-up videos to track progress.
@@ -68,7 +68,7 @@ const RecommendationsPage = () => {
               </p>
               <Button 
                 onClick={() => navigate("/")} 
-                className="bg-teal hover:bg-teal/80 text-white"
+                className="bg-brand-600 hover:bg-brand-700"
               >
                 Start a New Analysis
               </Button>

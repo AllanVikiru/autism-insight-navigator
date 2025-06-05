@@ -24,10 +24,10 @@ const UploadVideo = () => {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <section className="bg-gradient-to-b from-teal/10 to-white py-16 md:py-24">
+        <section className="bg-gradient-to-b from-brand-50 to-white py-16 md:py-24">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-navy mb-6">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-brand-950 mb-6">
                 Understand Emotions, Support Better
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-8">
@@ -42,37 +42,37 @@ const UploadVideo = () => {
         <section className="py-16 bg-gray-50">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 text-navy">How It Works</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">How It Works</h2>
               <p className="text-gray-600 mb-12">
                 Our platform helps bridge the emotional understanding gap for better support of individuals with autism.
               </p>
               
               <div className="grid gap-8 md:grid-cols-3">
                 <div className="flex flex-col items-center">
-                  <div className="bg-teal/20 text-navy rounded-full w-12 h-12 flex items-center justify-center mb-4 font-bold">
+                  <div className="bg-brand-100 text-brand-800 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                     1
                   </div>
-                  <h3 className="text-lg font-semibold mb-2 text-navy">Upload Video</h3>
+                  <h3 className="text-lg font-semibold mb-2">Upload Video</h3>
                   <p className="text-sm text-gray-600">
                     Upload a video or provide a URL to a video showing interactions with the individual.
                   </p>
                 </div>
                 
                 <div className="flex flex-col items-center">
-                  <div className="bg-orange/20 text-navy rounded-full w-12 h-12 flex items-center justify-center mb-4 font-bold">
+                  <div className="bg-brand-100 text-brand-800 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                     2
                   </div>
-                  <h3 className="text-lg font-semibold mb-2 text-navy">Analyze Emotions</h3>
+                  <h3 className="text-lg font-semibold mb-2">Analyze Emotions</h3>
                   <p className="text-sm text-gray-600">
                     Our system analyzes the video to identify emotional patterns and expressions.
                   </p>
                 </div>
                 
                 <div className="flex flex-col items-center">
-                  <div className="bg-red/20 text-navy rounded-full w-12 h-12 flex items-center justify-center mb-4 font-bold">
+                  <div className="bg-brand-100 text-brand-800 rounded-full w-12 h-12 flex items-center justify-center mb-4">
                     3
                   </div>
-                  <h3 className="text-lg font-semibold mb-2 text-navy">Get Recommendations</h3>
+                  <h3 className="text-lg font-semibold mb-2">Get Recommendations</h3>
                   <p className="text-sm text-gray-600">
                     Receive personalized suggestions for better communication and support strategies.
                   </p>

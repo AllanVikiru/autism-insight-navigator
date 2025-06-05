@@ -44,7 +44,7 @@ const AnalyzeVideo = () => {
               onClick={() => navigate("/")} 
               variant="ghost" 
               size="sm"
-              className="flex items-center text-navy hover:text-teal"
+              className="flex items-center"
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Back to Upload
@@ -53,7 +53,7 @@ const AnalyzeVideo = () => {
             <Button 
               onClick={() => navigate("/recommendations")} 
               disabled={!isAnalysisComplete}
-              className="flex items-center bg-teal hover:bg-teal/80 text-white"
+              className="flex items-center bg-brand-600 hover:bg-brand-700"
             >
               View Recommendations
               <ChevronRight className="w-4 h-4 ml-2" />
@@ -61,7 +61,7 @@ const AnalyzeVideo = () => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold mb-8 text-center text-navy">Emotion Analysis</h1>
+            <h1 className="text-3xl font-bold mb-8 text-center">Emotion Analysis</h1>
             
             {videoSource && (
               <>
