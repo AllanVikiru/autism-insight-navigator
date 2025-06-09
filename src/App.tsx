@@ -4,8 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import UploadVideo from "./pages/UploadVideo";
-import AnalyzeVideo from "./pages/AnalyzeVideo";
+import UploadImage from "./pages/UploadImage";
+import AnalyzeImage from "./pages/AnalyzeImage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import About from "./pages/About";
 import Resources from "./pages/Resources";
@@ -20,8 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<UploadVideo />} />
-          <Route path="/analyze" element={<AnalyzeVideo />} />
+          <Route path="/" element={<UploadImage />} />
+          <Route path="/analyze" element={<AnalyzeImage />} />
           <Route path="/recommendations" element={<RecommendationsPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/resources" element={<Resources />} />

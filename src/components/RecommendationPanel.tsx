@@ -13,10 +13,11 @@ interface EmotionData {
 }
 
 const mockEmotions: EmotionData[] = [
-  { emotion: "Happy", percentage: 45, color: "bg-green-500" },
-  { emotion: "Neutral", percentage: 30, color: "bg-blue-500" },
-  { emotion: "Confused", percentage: 15, color: "bg-amber-500" },
-  { emotion: "Anxious", percentage: 10, color: "bg-red-500" },
+  { emotion: "Happy", percentage: 35, color: "bg-green-500" },
+  { emotion: "Neutral", percentage: 25, color: "bg-blue-500" },
+  { emotion: "Surprised", percentage: 20, color: "bg-yellow-500" },
+  { emotion: "Sad", percentage: 15, color: "bg-gray-500" },
+  { emotion: "Angry", percentage: 5, color: "bg-red-500" },
 ];
 
 interface Recommendation {
@@ -33,35 +34,35 @@ const mockRecommendations: Recommendation[] = [
   },
   {
     id: "rec-2",
-    title: "Handling Confusion",
-    content: "When signs of confusion appear, simplify your communication. Use clear, direct language without idioms or figures of speech. Consider visual supports to complement verbal information. Allow extra processing time and check for understanding by asking simple yes/no questions."
+    title: "Understanding Surprise",
+    content: "Surprise can indicate unexpected changes or new experiences. Help the individual process this emotion by explaining what happened and providing reassurance. Use simple language to describe the situation and check if they need support."
   },
   {
     id: "rec-3",
-    title: "Managing Anxiety",
-    content: "When anxiety is detected, first ensure the environment is not overstimulating (reduce noise, bright lights, etc). Offer a quiet space if needed. Use calming, predictable language and consider introducing a familiar comfort item or activity. Deep breathing exercises may help in some cases."
+    title: "Supporting During Sadness",
+    content: "When sadness is detected, offer comfort and understanding. Acknowledge their feelings without trying to immediately fix the situation. Provide a safe space and consider engaging in preferred calming activities together."
   },
   {
     id: "rec-4",
-    title: "Supporting Transitions",
-    content: "Transitions between activities can be challenging. Use visual schedules to show what's happening now and what's coming next. Give advance notice before transitions, using timers if helpful. Maintain consistent routines when possible, and acknowledge the difficulty when routines must change."
+    title: "Managing Anger",
+    content: "If anger is present, first ensure safety for everyone. Help the individual identify what triggered the emotion and teach coping strategies like deep breathing or taking a break in a quiet space."
   }
 ];
 
 interface RecommendationPanelProps {
-  videoSource: string;
+  imageSource: string;
 }
 
-export default function RecommendationPanel({ videoSource }: RecommendationPanelProps) {
+export default function RecommendationPanel({ imageSource }: RecommendationPanelProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [copilotPrompt, setCopilotPrompt] = useState("");
   const [showingCopilotPrompt, setShowingCopilotPrompt] = useState(false);
 
   useEffect(() => {
-    if (!videoSource) return;
+    if (!imageSource) return;
 
-    // Reset on new video
+    // Reset on new image
     setIsLoading(true);
     setRecommendations([]);
 
@@ -74,16 +75,16 @@ export default function RecommendationPanel({ videoSource }: RecommendationPanel
       setCopilotPrompt(prompt);
       
       setIsLoading(false);
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
-  }, [videoSource]);
+  }, [imageSource]);
 
   const handleCopilotPromptToggle = () => {
     setShowingCopilotPrompt(!showingCopilotPrompt);
   };
 
-  if (!videoSource) {
+  if (!imageSource) {
     return null;
   }
 
@@ -96,7 +97,7 @@ export default function RecommendationPanel({ videoSource }: RecommendationPanel
         {isLoading ? (
           <div className="space-y-4">
             <p className="text-muted-foreground text-sm animate-pulse-gentle">
-              Generating personalized recommendations based on emotional analysis...
+              Generating personalized recommendations based on facial expression analysis...
             </p>
             {[1, 2, 3].map((i) => (
               <div key={i} className="space-y-2">
@@ -108,7 +109,7 @@ export default function RecommendationPanel({ videoSource }: RecommendationPanel
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground mb-4">
-              Based on the emotional patterns observed in the video, here are some suggested approaches:
+              Based on the emotions detected in the facial expression, here are some suggested approaches:
             </p>
             <Accordion type="single" collapsible className="w-full">
               {recommendations.map((rec) => (
