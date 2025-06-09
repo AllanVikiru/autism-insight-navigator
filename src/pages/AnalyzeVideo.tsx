@@ -71,7 +71,7 @@ const AnalyzeVideo = () => {
                 
                 <div className="mb-8">
                   <EmotionAnalysis 
-                    videoSource={videoSource} 
+                    imageSource={videoSource} 
                     onAnalysisComplete={handleAnalysisComplete}
                   />
                 </div>
