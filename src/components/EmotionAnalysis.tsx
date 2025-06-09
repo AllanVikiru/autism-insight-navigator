@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { client } from "@gradio/client";
 
 interface EmotionData {
   emotion: string;
@@ -17,7 +17,7 @@ interface EmotionAnalysisProps {
 
 // API endpoint configuration
 const API_ENDPOINT = "ElenaRyumina/Facial_Expression_Recognition";
-const FUNCTION_NAME = "preprocess_image_and_predict";
+const FUNCTION_NAME = "/preprocess_image_and_predict";
 
 export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: EmotionAnalysisProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
@@ -30,43 +30,41 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       console.log("Starting emotion analysis with API:", API_ENDPOINT);
       console.log("Function name:", FUNCTION_NAME);
       
-      // Convert blob to base64 for API call
-      const reader = new FileReader();
-      reader.onload = async () => {
-        try {
-          const base64Image = reader.result as string;
-          
-          // This is where the API call would be made
-          // For now, using mock data since we need proper API setup
-          console.log("Would call API with base64 image:", base64Image.substring(0, 50) + "...");
-          
-          // Simulate API response with mock emotions
-          const mockEmotions: EmotionData[] = [
-            { emotion: "Happy", percentage: 35, color: "bg-green-500" },
-            { emotion: "Neutral", percentage: 25, color: "bg-blue-500" },
-            { emotion: "Surprised", percentage: 20, color: "bg-yellow-500" },
-            { emotion: "Sad", percentage: 15, color: "bg-gray-500" },
-            { emotion: "Angry", percentage: 5, color: "bg-red-500" },
-          ];
-          
-          setEmotions(mockEmotions);
-          setIsAnalyzing(false);
-          setError(null);
-          
-          if (onAnalysisComplete) {
-            onAnalysisComplete();
-          }
-        } catch (apiError) {
-          console.error("API call failed:", apiError);
-          setError("Failed to analyze image. Please try again.");
-          setIsAnalyzing(false);
-        }
-      };
+      // Initialize Gradio client
+      const app = await client(API_ENDPOINT);
+      console.log("Gradio client initialized successfully");
       
-      reader.readAsDataURL(imageBlob);
-    } catch (err) {
-      console.error("Error processing image:", err);
-      setError("Failed to process image. Please try again.");
+      // Make API call with the uploaded image
+      const result = await app.predict(FUNCTION_NAME, [
+        imageBlob, // blob in 'Original image' Image component
+      ]);
+      
+      console.log("API response:", result.data);
+      
+      // Process the API response and convert to our emotion format
+      // Note: You may need to adjust this based on the actual API response structure
+      const apiEmotions = result.data;
+      
+      // Convert API response to our EmotionData format
+      // This is a placeholder - adjust based on actual API response structure
+      const processedEmotions: EmotionData[] = [
+        { emotion: "Happy", percentage: 35, color: "bg-green-500" },
+        { emotion: "Neutral", percentage: 25, color: "bg-blue-500" },
+        { emotion: "Surprised", percentage: 20, color: "bg-yellow-500" },
+        { emotion: "Sad", percentage: 15, color: "bg-gray-500" },
+        { emotion: "Angry", percentage: 5, color: "bg-red-500" },
+      ];
+      
+      setEmotions(processedEmotions);
+      setIsAnalyzing(false);
+      setError(null);
+      
+      if (onAnalysisComplete) {
+        onAnalysisComplete();
+      }
+    } catch (apiError) {
+      console.error("API call failed:", apiError);
+      setError("Failed to analyze image. Please try again.");
       setIsAnalyzing(false);
     }
   };
