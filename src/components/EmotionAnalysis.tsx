@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -38,6 +37,11 @@ const emotionColorMap: Record<string, string> = {
   "Contempt": "bg-indigo-500"
 };
 
+// Utility function to round a number to 2 decimal places
+function round(value: number, decimals: number = 2): number {
+  return Number(Math.round(Number(value + 'e' + decimals)) + 'e-' + decimals);
+}
+
 export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: EmotionAnalysisProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
@@ -50,6 +54,7 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
     // Check if we have the specific format with label at index 2
     if (Array.isArray(apiEmotions) && apiEmotions.length > 2 && apiEmotions[2]?.label) {
       const predominantEmotion = apiEmotions[2].label;
+      const percentage = apiEmotions[2].confidences[0].confidence;
       console.log("Predominant emotion detected:", predominantEmotion);
       
       // Get color for the emotion, default to blue if not found
@@ -59,7 +64,7 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       return {
         emotions: [{
           emotion: `Predominant emotion detected: ${predominantEmotion}`,
-          percentage: 100,
+          percentage: round(percentage * 100, 2), // Convert to percentage
           color: color
         }],
         predominant: predominantEmotion
