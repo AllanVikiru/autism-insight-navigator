@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -48,7 +47,23 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
   const processApiResponse = (apiEmotions: any): EmotionData[] => {
     console.log("Processing API emotions:", apiEmotions);
     
-    // Handle different possible API response formats
+    // Check if we have the specific format with label at index 2
+    if (Array.isArray(apiEmotions) && apiEmotions.length > 2 && apiEmotions[2]?.label) {
+      const predominantEmotion = apiEmotions[2].label;
+      console.log("Predominant emotion detected:", predominantEmotion);
+      
+      // Get color for the emotion, default to blue if not found
+      const color = emotionColorMap[predominantEmotion] || emotionColorMap[predominantEmotion.toLowerCase()] || "bg-blue-500";
+      
+      // Return the predominant emotion with 100% confidence
+      return [{
+        emotion: `Predominant emotion detected: ${predominantEmotion}`,
+        percentage: 100,
+        color: color
+      }];
+    }
+    
+    // Handle different possible API response formats as fallback
     let emotionData = apiEmotions;
     
     // If the response is nested, try to extract the emotion data
