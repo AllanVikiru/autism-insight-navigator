@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -19,11 +20,75 @@ interface EmotionAnalysisProps {
 const API_ENDPOINT = "ElenaRyumina/Facial_Expression_Recognition";
 const FUNCTION_NAME = "/preprocess_image_and_predict";
 
+// Color mapping for emotions
+const emotionColorMap: Record<string, string> = {
+  "Happy": "bg-green-500",
+  "Happiness": "bg-green-500",
+  "Joy": "bg-green-500",
+  "Neutral": "bg-blue-500",
+  "Surprised": "bg-yellow-500",
+  "Surprise": "bg-yellow-500",
+  "Sad": "bg-gray-500",
+  "Sadness": "bg-gray-500",
+  "Angry": "bg-red-500",
+  "Anger": "bg-red-500",
+  "Fear": "bg-purple-500",
+  "Fearful": "bg-purple-500",
+  "Disgust": "bg-orange-500",
+  "Disgusted": "bg-orange-500",
+  "Contempt": "bg-indigo-500"
+};
+
 export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: EmotionAnalysisProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
   const [tabValue, setTabValue] = useState("overview");
   const [error, setError] = useState<string | null>(null);
+
+  const processApiResponse = (apiEmotions: any): EmotionData[] => {
+    console.log("Processing API emotions:", apiEmotions);
+    
+    // Handle different possible API response formats
+    let emotionData = apiEmotions;
+    
+    // If the response is nested, try to extract the emotion data
+    if (Array.isArray(apiEmotions) && apiEmotions.length > 0) {
+      emotionData = apiEmotions[0];
+    }
+    
+    // If it's an object with emotion properties
+    if (typeof emotionData === 'object' && emotionData !== null) {
+      const processedEmotions: EmotionData[] = [];
+      
+      // Convert object to array format
+      Object.entries(emotionData).forEach(([emotion, value]) => {
+        let percentage = 0;
+        
+        // Handle different value formats (number, string, etc.)
+        if (typeof value === 'number') {
+          percentage = Math.round(value * 100); // Convert decimal to percentage
+        } else if (typeof value === 'string') {
+          percentage = Math.round(parseFloat(value) * 100);
+        }
+        
+        // Get color for emotion, default to gray if not found
+        const color = emotionColorMap[emotion] || emotionColorMap[emotion.toLowerCase()] || "bg-gray-400";
+        
+        processedEmotions.push({
+          emotion: emotion,
+          percentage: percentage,
+          color: color
+        });
+      });
+      
+      // Sort by percentage in descending order
+      return processedEmotions.sort((a, b) => b.percentage - a.percentage);
+    }
+    
+    // If we can't parse the response, return empty array
+    console.warn("Could not parse API response format:", apiEmotions);
+    return [];
+  };
 
   const analyzeImage = async (imageBlob: Blob) => {
     try {
@@ -42,22 +107,25 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       console.log("API response:", result.data);
       
       // Process the API response and convert to our emotion format
-      // Note: You may need to adjust this based on the actual API response structure
       const apiEmotions = result.data;
+      const processedEmotions = processApiResponse(apiEmotions);
       
-      // Convert API response to our EmotionData format
-      // This is a placeholder - adjust based on actual API response structure
-      const processedEmotions: EmotionData[] = [
-        { emotion: "Happy", percentage: 35, color: "bg-green-500" },
-        { emotion: "Neutral", percentage: 25, color: "bg-blue-500" },
-        { emotion: "Surprised", percentage: 20, color: "bg-yellow-500" },
-        { emotion: "Sad", percentage: 15, color: "bg-gray-500" },
-        { emotion: "Angry", percentage: 5, color: "bg-red-500" },
-      ];
+      // If no emotions were processed, show fallback data with a warning
+      if (processedEmotions.length === 0) {
+        console.warn("No emotions detected from API response, using fallback data");
+        setError("Emotions detected but format may be unexpected. Please check console for details.");
+        
+        // Fallback data for display
+        const fallbackEmotions: EmotionData[] = [
+          { emotion: "Analysis Complete", percentage: 100, color: "bg-blue-500" }
+        ];
+        setEmotions(fallbackEmotions);
+      } else {
+        setEmotions(processedEmotions);
+        setError(null);
+      }
       
-      setEmotions(processedEmotions);
       setIsAnalyzing(false);
-      setError(null);
       
       if (onAnalysisComplete) {
         onAnalysisComplete();
