@@ -9,11 +9,13 @@ import { ChevronLeft } from "lucide-react";
 
 const RecommendationsPage = () => {
   const [imageSource, setImageSource] = useState("");
+  const [predominantEmotion, setPredominantEmotion] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve image data from sessionStorage
+    // Retrieve image data and emotion from sessionStorage
     const storedSource = sessionStorage.getItem("imageSource");
+    const storedEmotion = sessionStorage.getItem("predominantEmotion");
     
     if (!storedSource) {
       // If no image data is found, redirect to upload page
@@ -22,6 +24,7 @@ const RecommendationsPage = () => {
     }
     
     setImageSource(storedSource);
+    setPredominantEmotion(storedEmotion || "");
   }, [navigate]);
 
   return (
@@ -53,18 +56,21 @@ const RecommendationsPage = () => {
             <h1 className="text-3xl font-bold mb-8 text-center">Support Recommendations</h1>
             
             <div className="mb-8">
-              <RecommendationPanel imageSource={imageSource} />
+              <RecommendationPanel 
+                imageSource={imageSource} 
+                predominantEmotion={predominantEmotion}
+              />
             </div>
             
             <div className="mt-12 bg-gray-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Next Steps</h2>
               <p className="text-gray-600 mb-4">
-                These recommendations are based on the emotional expressions detected in your image. 
-                Consider implementing these strategies and taking follow-up photos to track progress.
+                Use the Microsoft Copilot prompt above to get personalized recommendations 
+                specific to the detected emotion in your image.
               </p>
               <p className="text-gray-600 mb-4">
-                For more personalized guidance, use the Microsoft Copilot prompt to get AI-powered 
-                recommendations specific to the emotions detected in your image.
+                Consider implementing the strategies provided by Copilot and taking follow-up 
+                photos to track progress over time.
               </p>
               <Button 
                 onClick={() => navigate("/")} 

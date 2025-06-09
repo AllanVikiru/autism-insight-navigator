@@ -1,7 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { client } from "@gradio/client";
 
 interface EmotionData {
@@ -12,7 +12,7 @@ interface EmotionData {
 
 interface EmotionAnalysisProps {
   imageSource: string;
-  onAnalysisComplete?: () => void;
+  onAnalysisComplete?: (predominantEmotion?: string) => void;
 }
 
 // API endpoint configuration
@@ -41,10 +41,10 @@ const emotionColorMap: Record<string, string> = {
 export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: EmotionAnalysisProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [emotions, setEmotions] = useState<EmotionData[]>([]);
-  const [tabValue, setTabValue] = useState("overview");
   const [error, setError] = useState<string | null>(null);
+  const [predominantEmotion, setPredominantEmotion] = useState<string>("");
 
-  const processApiResponse = (apiEmotions: any): EmotionData[] => {
+  const processApiResponse = (apiEmotions: any): { emotions: EmotionData[], predominant: string } => {
     console.log("Processing API emotions:", apiEmotions);
     
     // Check if we have the specific format with label at index 2
@@ -56,53 +56,19 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       const color = emotionColorMap[predominantEmotion] || emotionColorMap[predominantEmotion.toLowerCase()] || "bg-blue-500";
       
       // Return the predominant emotion with 100% confidence
-      return [{
-        emotion: `Predominant emotion detected: ${predominantEmotion}`,
-        percentage: 100,
-        color: color
-      }];
-    }
-    
-    // Handle different possible API response formats as fallback
-    let emotionData = apiEmotions;
-    
-    // If the response is nested, try to extract the emotion data
-    if (Array.isArray(apiEmotions) && apiEmotions.length > 0) {
-      emotionData = apiEmotions[0];
-    }
-    
-    // If it's an object with emotion properties
-    if (typeof emotionData === 'object' && emotionData !== null) {
-      const processedEmotions: EmotionData[] = [];
-      
-      // Convert object to array format
-      Object.entries(emotionData).forEach(([emotion, value]) => {
-        let percentage = 0;
-        
-        // Handle different value formats (number, string, etc.)
-        if (typeof value === 'number') {
-          percentage = Math.round(value * 100); // Convert decimal to percentage
-        } else if (typeof value === 'string') {
-          percentage = Math.round(parseFloat(value) * 100);
-        }
-        
-        // Get color for emotion, default to gray if not found
-        const color = emotionColorMap[emotion] || emotionColorMap[emotion.toLowerCase()] || "bg-gray-400";
-        
-        processedEmotions.push({
-          emotion: emotion,
-          percentage: percentage,
+      return {
+        emotions: [{
+          emotion: `Predominant emotion detected: ${predominantEmotion}`,
+          percentage: 100,
           color: color
-        });
-      });
-      
-      // Sort by percentage in descending order
-      return processedEmotions.sort((a, b) => b.percentage - a.percentage);
+        }],
+        predominant: predominantEmotion
+      };
     }
     
     // If we can't parse the response, return empty array
     console.warn("Could not parse API response format:", apiEmotions);
-    return [];
+    return { emotions: [], predominant: "" };
   };
 
   const analyzeImage = async (imageBlob: Blob) => {
@@ -123,7 +89,7 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       
       // Process the API response and convert to our emotion format
       const apiEmotions = result.data;
-      const processedEmotions = processApiResponse(apiEmotions);
+      const { emotions: processedEmotions, predominant } = processApiResponse(apiEmotions);
       
       // If no emotions were processed, show fallback data with a warning
       if (processedEmotions.length === 0) {
@@ -135,15 +101,17 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
           { emotion: "Analysis Complete", percentage: 100, color: "bg-blue-500" }
         ];
         setEmotions(fallbackEmotions);
+        setPredominantEmotion("");
       } else {
         setEmotions(processedEmotions);
+        setPredominantEmotion(predominant);
         setError(null);
       }
       
       setIsAnalyzing(false);
       
       if (onAnalysisComplete) {
-        onAnalysisComplete();
+        onAnalysisComplete(predominant);
       }
     } catch (apiError) {
       console.error("API call failed:", apiError);
@@ -158,6 +126,7 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
     setIsAnalyzing(true);
     setEmotions([]);
     setError(null);
+    setPredominantEmotion("");
 
     // Convert image source to blob for analysis
     fetch(imageSource)
@@ -180,65 +149,35 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
         <CardTitle className="text-xl text-center md:text-left">Emotion Analysis</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="overview" value={tabValue} onValueChange={setTabValue}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="insights">Insights</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="overview" className="space-y-4 mt-4">
-            {isAnalyzing ? (
-              <div className="space-y-4 py-8">
-                <div className="text-center">
-                  <p className="text-muted-foreground animate-pulse-gentle">
-                    Analyzing facial expressions using {API_ENDPOINT}...
-                  </p>
+        {isAnalyzing ? (
+          <div className="space-y-4 py-8">
+            <div className="text-center">
+              <p className="text-muted-foreground animate-pulse-gentle">
+                Analyzing facial expressions using {API_ENDPOINT}...
+              </p>
+            </div>
+            <Progress value={65} className="h-2" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <p className="text-red-500">{error}</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground mb-4">
+              The analysis shows the emotions detected in the facial expression.
+            </p>
+            {emotions.map((item) => (
+              <div key={item.emotion} className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{item.emotion}</span>
+                  <span className="text-sm text-muted-foreground">{item.percentage}%</span>
                 </div>
-                <Progress value={65} className="h-2" />
+                <Progress value={item.percentage} className={`h-2 ${item.color}`} />
               </div>
-            ) : error ? (
-              <div className="text-center py-8">
-                <p className="text-red-500">{error}</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground mb-4">
-                  The analysis shows the emotions detected in the facial expression.
-                </p>
-                {emotions.map((item) => (
-                  <div key={item.emotion} className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">{item.emotion}</span>
-                      <span className="text-sm text-muted-foreground">{item.percentage}%</span>
-                    </div>
-                    <Progress value={item.percentage} className={`h-2 ${item.color}`} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="details" className="py-4">
-            <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-muted-foreground text-center">
-                {isAnalyzing 
-                  ? "Processing detailed analysis..." 
-                  : "Detailed breakdown of facial features and confidence scores."}
-              </p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="insights" className="py-4">
-            <div className="min-h-[200px] flex items-center justify-center">
-              <p className="text-muted-foreground text-center">
-                {isAnalyzing 
-                  ? "Generating insights..." 
-                  : "AI-powered insights about the detected emotions and their implications."}
-              </p>
-            </div>
-          </TabsContent>
-        </Tabs>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
