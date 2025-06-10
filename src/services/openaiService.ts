@@ -1,4 +1,6 @@
+
 import OpenAI from 'openai';
+import { generatePromptText, getFriendlyErrorMessage } from '@/utils/promptUtils';
 
 // OpenAI configuration - you only need to set your API key here
 const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
@@ -31,7 +33,7 @@ export const generateRecommendations = async ({ predominantEmotion }: OpenAIProm
     return {
       recommendations: '',
       success: false,
-      error: 'OpenAI API key not configured. Please set VITE_OPENAI_API_KEY in your environment variables.'
+      error: getFriendlyErrorMessage('API key not configured')
     };
   }
 
@@ -39,26 +41,17 @@ export const generateRecommendations = async ({ predominantEmotion }: OpenAIProm
     return {
       recommendations: '',
       success: false,
-      error: 'No emotion detected to generate recommendations for.'
+      error: 'No emotion was detected in the image. Please try analyzing a clearer image.'
     };
   }
 
   try {
-    const prompt = `I am currently working with a student living with autism and they are experiencing ${predominantEmotion}. How do I assist them as an instructor?
-
-Please provide:
-1. Specific strategies for responding to this emotional state in a student with autism
-2. Communication approaches that would be most effective given this emotion
-3. Potential triggers that might be causing this emotion and how to address them
-4. Activities or coping mechanisms that might help regulate this emotion
-5. Signs to watch for if this emotion may escalate and how to prevent that
-
-Please format your response in clear, concise sections that are easy to understand and implement in an educational setting.`;
+    const prompt = generatePromptText(predominantEmotion);
 
     console.log('Sending prompt to OpenAI:', prompt);
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4.1-2025-04-14',
       messages: [
         {
           role: 'system',
@@ -83,10 +76,12 @@ Please format your response in clear, concise sections that are easy to understa
     };
   } catch (error) {
     console.error('Error calling OpenAI API:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    
     return {
       recommendations: '',
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to generate recommendations'
+      error: getFriendlyErrorMessage(errorMessage)
     };
   }
 };

@@ -55,21 +55,20 @@ const RecommendationsPage = () => {
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold mb-8 text-center">Support Recommendations</h1>
             
-            <div className="mb-8">
-              <RecommendationPanel 
-                imageSource={imageSource} 
-                predominantEmotion={predominantEmotion}
-              />
-            </div>
+            <RecommendationPanel 
+              imageSource={imageSource} 
+              predominantEmotion={predominantEmotion}
+            />
             
             <div className="mt-12 bg-gray-50 p-6 rounded-lg">
               <h2 className="text-xl font-semibold mb-4">Next Steps</h2>
               <p className="text-gray-600 mb-4">
-                Use the Microsoft Copilot prompt above to get personalized recommendations 
-                specific to the detected emotion in your image.
+                Use the recommendations above to support your student with autism. 
+                If you encounter any issues with the AI-generated recommendations, 
+                you can use the Microsoft Copilot prompt provided.
               </p>
               <p className="text-gray-600 mb-4">
-                Consider implementing the strategies provided by Copilot and taking follow-up 
+                Consider implementing the strategies provided and taking follow-up 
                 photos to track progress over time.
               </p>
               <Button 
