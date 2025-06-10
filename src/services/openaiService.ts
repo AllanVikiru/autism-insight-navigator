@@ -1,8 +1,7 @@
-
 import OpenAI from 'openai';
 
 // OpenAI configuration - you only need to set your API key here
-const OPENAI_API_KEY = process.env.VITE_OPENAI_API_KEY || '';
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
 
 let openai: OpenAI | null = null;
 
