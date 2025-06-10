@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -107,10 +108,15 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
         ];
         setEmotions(fallbackEmotions);
         setPredominantEmotion("");
+        // Store empty emotion in sessionStorage for fallback
+        sessionStorage.setItem("predominantEmotion", "");
       } else {
         setEmotions(processedEmotions);
         setPredominantEmotion(predominant);
         setError(null);
+        // Store the predominant emotion in sessionStorage
+        sessionStorage.setItem("predominantEmotion", predominant);
+        console.log("Stored predominant emotion in sessionStorage:", predominant);
       }
       
       setIsAnalyzing(false);
@@ -122,6 +128,8 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
       console.error("API call failed:", apiError);
       setError("Failed to analyze image. Please try again.");
       setIsAnalyzing(false);
+      // Store empty emotion in sessionStorage for error case
+      sessionStorage.setItem("predominantEmotion", "");
     }
   };
 
@@ -141,6 +149,8 @@ export default function EmotionAnalysis({ imageSource, onAnalysisComplete }: Emo
         console.error("Error fetching image:", err);
         setError("Failed to load image. Please try again.");
         setIsAnalyzing(false);
+        // Store empty emotion in sessionStorage for error case
+        sessionStorage.setItem("predominantEmotion", "");
       });
   }, [imageSource, onAnalysisComplete]);
 
